@@ -402,8 +402,6 @@ class Game {
           enemies[i].draw();
           x_arg += 4;
         }
-
-    
       }
       else if (level == 2)
       {
@@ -556,10 +554,6 @@ class Game {
       if (level_cleared()) {
         reset_level();
       }
-
-
-      
-
     }
 
   private:
@@ -603,12 +597,8 @@ void setup() {
   Serial.begin(9600);
   pinMode(BUTTON_PIN_NUMBER, INPUT);
   matrix.begin();
-  
-      // COMMENTED SO THAT WE CAN TEST QUICKLY 
-      title();
-
-      
-      game.setupGame();
+  title();
+  game.setupGame();
 }
 
 // see https://www.arduino.cc/reference/en/language/structure/sketch/loop/
@@ -616,8 +606,6 @@ void loop() {
   int potentiometer_value = analogRead(POTENTIOMETER_PIN_NUMBER);
   bool button_pressed = (digitalRead(BUTTON_PIN_NUMBER) == HIGH);
   game.update(potentiometer_value, button_pressed);
-
-
 }
 
 // displays Level
@@ -646,11 +634,8 @@ void game_over() {
 void title() {
   matrix.fillScreen(BLACK.to_333());
   matrix.setTextSize(1);
-
   int textWidth = 4 * strlen("SPACE INVADERS"); // Approximate width of the text
   int x = matrix.width(); // Start the text off the screen to the right
-
-
   while (x > -textWidth) {
     matrix.fillScreen(BLACK.to_333());
     matrix.setCursor(x - 28, 0);
@@ -682,16 +667,6 @@ void title() {
     matrix.setTextColor(GREEN.to_333());
     matrix.print("S");
     matrix.setTextColor(WHITE.to_333());
-
-
-
-
-
-
-
-
-
-    //matrix.print("SPACE INVADERS");
     delay(150); // Adjust for scrolling speed
     x--; // Move text left by one pixel each loop
   }

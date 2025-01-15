@@ -147,6 +147,9 @@ class Invader {
     // draws the Invader if its strength is greater than 0
     // calls: draw_with_rgb
     void draw() {
+
+      // If the invader has strength, the value of strength is
+      // checked and its corresponding color is assigned to body color
       if (strength > 0) {
         Color body_color;
         if (strength == 1) {
@@ -172,6 +175,8 @@ class Invader {
         }
         draw_with_rgb(body_color, BLUE);
       }
+      // If the invader does not have strength, the whole invader
+      // is drawn with black to erse it
       else
       {
         draw_with_rgb(BLACK, BLACK);
@@ -223,6 +228,352 @@ class Invader {
     }
 };
 
+class Boss1 {
+  public:
+    Boss1() {
+      x = 6;
+      y = 9;
+      strength = 30;
+      time = millis();
+    }
+
+    void initialize_boss1(int x_arg, int y_arg, int strength_arg) {
+      x = x_arg;
+      y = y_arg;
+      strength = strength_arg;
+      time = millis();
+    }
+    // getters
+    int get_x() const {
+      return x;
+    }
+    int get_y() const {
+      return y;
+    }
+    int get_strength() const {
+      return strength;
+    }
+    // Moves the Boss 1 down the screen by one row
+    // Modifies: y
+    void move() {
+      time = millis();
+      if(time > last_time + 1000)
+      {
+        erase();
+        y += 1;
+        if (strength <= 10) {
+          weak_draw();
+        }
+        else {
+        draw();
+        }
+
+        last_time = time;
+      }
+      
+    }
+    void draw(){
+      draw_with_rgb(ORANGE, BLUE, WHITE, RED);
+    }
+
+    void weak_draw() {
+      draw_with_rgb(RED, BLUE, WHITE, ORANGE);
+    }
+
+    void erase() {
+      draw_with_rgb(BLACK, BLACK, BLACK, BLACK);
+    }    
+
+    bool has_been_hit(int x_arg, int y_arg) {
+      if (get_strength() > 0) {
+        for (int i = 1; i <= 18; i++) {
+          if (x_arg == (x + i)) {
+            if (y_arg == (y - 2)) {
+              return true;
+            }
+          }
+        }
+        if (x_arg == x || x_arg == (x + 19)) {
+          if (y_arg == y) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    void hit() {
+      strength -= 1;
+      if (strength > 0) {
+        if (strength <= 10) {
+          weak_draw();
+        }
+        else {
+        draw();
+        }
+      }
+      else {
+        erase();
+      }
+
+    }
+
+    bool boss1_hit_player(int x_arg, int y_arg) {
+        if (x_arg == x || x_arg == (x + 19)) {
+          if (y_arg == y) {
+            return true;
+          }
+        }
+        else if ((x_arg + 1)  == x || (x_arg - 1) == x) {
+          if ((y_arg + 1) == y) {
+            return true;
+          }
+        }
+        else if ((x_arg + 1)  == (x + 19) || (x_arg - 1) == (x + 19)) {
+          if ((y_arg + 1) == y) {
+            return true;
+          }
+        } 
+        return false;
+    }
+
+    bool has_hit_bottom() {
+       if (y >= matrix.height()) {
+           return true;
+       }
+       return false;
+    }
+
+  private:
+    int x;
+    int y;
+    int strength;
+    unsigned long time;
+    unsigned long last_time = 0;
+    void draw_with_rgb(Color body_color, Color eye_color, Color face_color, Color mouth_color) {
+      // draws the body
+      matrix.drawPixel(x, y, body_color.to_333());
+      matrix.drawPixel(x, y-1, body_color.to_333());
+      matrix.drawPixel(x, y-2, body_color.to_333());
+      matrix.drawPixel(x+19, y, body_color.to_333());
+      matrix.drawPixel(x+19, y-1, body_color.to_333());
+      matrix.drawPixel(x+19, y-2, body_color.to_333());
+      for(int i = 1; i <= 18; i++) {
+        matrix.drawPixel(x+i, y-2, body_color.to_333());
+      }
+      for(int i = 0; i < 3; i++) {
+        matrix.drawPixel(x+6, y-3-i, body_color.to_333());
+        matrix.drawPixel(x+7, y-3-i, body_color.to_333());
+        matrix.drawPixel(x+12, y-3-i, body_color.to_333());
+        matrix.drawPixel(x+13, y-3-i, body_color.to_333());
+      }
+      for(int i = 0; i < 2 ; i++) {
+        matrix.drawPixel(x+5, y-4-i, body_color.to_333());
+        matrix.drawPixel(x+14, y-4-i, body_color.to_333());
+      }
+      matrix.drawPixel(x+7, y-6, body_color.to_333());
+      matrix.drawPixel(x+12, y-6, body_color.to_333());
+      matrix.drawPixel(x+3, y-5, body_color.to_333());
+      matrix.drawPixel(x+4, y-5, body_color.to_333());
+      matrix.drawPixel(x+15, y-5, body_color.to_333());
+      matrix.drawPixel(x+16, y-5, body_color.to_333());
+      for(int i = 0; i < 2; i++) {
+        matrix.drawPixel(x+2, y-6-i, body_color.to_333());
+        matrix.drawPixel(x+4, y-6-i, body_color.to_333());
+        matrix.drawPixel(x+15, y-6-i, body_color.to_333());
+        matrix.drawPixel(x+17, y-6-i, body_color.to_333());
+      }
+      for(int i = 0; i < 4; i++) {
+        matrix.drawPixel(x+8+i, y-7, body_color.to_333());
+      }
+      matrix.drawPixel(x+8, y-8, body_color.to_333());
+      matrix.drawPixel(x+11, y-8, body_color.to_333());
+      matrix.drawPixel(x+6, y-9, body_color.to_333());
+      matrix.drawPixel(x+7, y-9, body_color.to_333());
+      matrix.drawPixel(x+12, y-9, body_color.to_333());
+      matrix.drawPixel(x+13, y-9, body_color.to_333());
+
+      // draws the face
+      for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+          matrix.drawPixel(x+8+i, y-6+j, face_color.to_333());
+        }
+      }
+
+      // draws the eyes
+      matrix.drawPixel(x+8, y-6, eye_color.to_333());
+      matrix.drawPixel(x+11, y-6, eye_color.to_333());
+
+      // draws the mouth
+      matrix.drawPixel(x+9, y-4, mouth_color.to_333());
+      matrix.drawPixel(x+10, y-4, mouth_color.to_333());
+      matrix.drawPixel(x+9, y-3, mouth_color.to_333());
+      matrix.drawPixel(x+10, y-3, mouth_color.to_333());
+    }
+};
+
+class Boss2 {
+  public:
+    Boss2() {
+      x = 11;
+      y = 9;
+      strength = 25;
+      time = millis();
+    }
+
+    void initialize_boss2(int x_arg, int y_arg, int strength_arg) {
+      x = x_arg;
+      y = y_arg;
+      strength = strength_arg;
+      time = millis();
+    }
+    // getters
+    int get_x() const {
+      return x;
+    }
+    int get_y() const {
+      return y;
+    }
+    int get_strength() const {
+      return strength;
+    }
+    // Moves the Boss 1 down the screen by one row
+    // Modifies: y
+    void move() {
+      time = millis();
+      if(time > last_time + 1000)
+      {
+        erase();
+        y += 1;
+        if (strength <= 10) {
+          weak_draw();
+        }
+        else {
+        draw();
+        }
+
+        last_time = time;
+      }
+      
+    }
+    void draw(){
+      draw_with_rgb(GREEN, BLUE, LIME, BLUE);
+    }
+
+    void weak_draw() {
+      draw_with_rgb(GREEN, RED, LIME, RED);
+    }
+
+    void erase() {
+      draw_with_rgb(BLACK, BLACK, BLACK, BLACK);
+    }    
+
+    bool has_been_hit(int x_arg, int y_arg) {
+      if (get_strength() > 0) {
+        for (int i = 1; i <= 18; i++) {
+          if (x_arg == (x + i)) {
+            if (y_arg == (y - 2)) {
+              return true;
+            }
+          }
+        }
+        if (x_arg == x || x_arg == (x + 19)) {
+          if (y_arg == y) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    void hit() {
+      strength -= 1;
+      if (strength > 0) {
+        if (strength <= 10) {
+          weak_draw();
+        }
+        else {
+        draw();
+        }
+      }
+      else {
+        erase();
+      }
+
+    }
+
+    bool boss1_hit_player(int x_arg, int y_arg) {
+        if (x_arg == x || x_arg == (x + 19)) {
+          if (y_arg == y) {
+            return true;
+          }
+        }
+        else if ((x_arg + 1)  == x || (x_arg - 1) == x) {
+          if ((y_arg + 1) == y) {
+            return true;
+          }
+        }
+        else if ((x_arg + 1)  == (x + 19) || (x_arg - 1) == (x + 19)) {
+          if ((y_arg + 1) == y) {
+            return true;
+          }
+        } 
+        return false;
+    }
+
+    bool has_hit_bottom() {
+       if (y >= matrix.height()) {
+           return true;
+       }
+       return false;
+    }
+
+  private:
+    int x;
+    int y;
+    int strength;
+    unsigned long time;
+    unsigned long last_time = 0;
+    void draw_with_rgb(Color body_color, Color eye_color, Color face_color, Color mouth_color) {
+      // draws the body
+      for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+          matrix.drawPixel(x+i, y-j, body_color.to_333());
+        }
+      }
+
+      // draws the face
+      for (int i = 0; i < 6; i++) {
+        for (int j = 0; j < 6; j++) {
+          matrix.drawPixel(x+2+i, y-2-j, face_color.to_333());
+        }
+      }
+      for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+          matrix.drawPixel(x+i, y-4-j, face_color.to_333());
+          matrix.drawPixel(x+4+i, y-8-j, face_color.to_333());
+          matrix.drawPixel(x+4+i, y-j, face_color.to_333());
+          matrix.drawPixel(x+8+i, y-4-j, face_color.to_333());
+        }
+      }
+
+      // draws the eyes
+      for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+          matrix.drawPixel(x+2+i, y-5-j, eye_color.to_333());
+          matrix.drawPixel(x+6+i, y-5-j, eye_color.to_333());
+        }
+      }
+
+      // draws the mouth
+      for (int i = 0; i < 3; i++) {
+        matrix.drawPixel(x+4+i, y-3, mouth_color.to_333());
+      }
+      matrix.drawPixel(x+5, y-2, mouth_color.to_333());
+    }
+};
+
+
 class Cannonball {
   public:
     Cannonball() {
@@ -262,7 +613,9 @@ class Cannonball {
     // Modifies: y, fired
     void move() {
       time = millis();
-      if (fired && ((time > last_time_dot_was_moved + 50))) {
+      
+      // time > last_time_dot_was_moved + 50
+      if (fired && ((time > last_time_dot_was_moved + 35))) {
           erase();
           y -= 1;
           if (y < 0) {
@@ -375,7 +728,10 @@ class Game {
     // sets up a new game of Space Invaders
     // Modifies: global variable matrix
     void setupGame() {
-      // reset_level();
+      delay(500);
+      btwo.draw();
+      delay(10000000);
+      // Prints the current level and current number of player lives
       delay(500);
       print_level(level);
       delay(2000);
@@ -385,6 +741,10 @@ class Game {
       delay(2000);
       int x_arg = 1;
       int y_arg = 0;
+      
+
+      // Checks what level the player is on and sets the enemies array
+      // to have the invaders in the order expected for levels 1 to 4
       if (level == 1)
       {
         for (int i = 0; i < 8; i++) {
@@ -402,6 +762,8 @@ class Game {
           enemies[i].draw();
           x_arg += 4;
         }
+
+    
       }
       else if (level == 2)
       {
@@ -457,7 +819,18 @@ class Game {
           x_arg = 1;
         }
       }
-      else if (level > 4) {
+      else if (level == 6)
+      {
+        bone.initialize_boss1(6, 9, 30);
+        bone.draw();
+      }
+      // When player goes aboce level 4, the enemies array is filled with invaders
+      // of random strength using the random function
+
+      // turn this else if (level > 4) just to an else. We will add more ifs like if level is 6 then do a boss battle
+      // so if it is not one of the 4 first levels or the boss levels then just do the randomized level
+
+      else {
         x_arg = 1;
         y_arg = 0;
         int lv_more[2][8];
@@ -491,10 +864,11 @@ class Game {
         game_over();
         delay(1000);
         level = 1;
-        //time = 0;
         player.restart_player();
         setupGame();
       }
+
+
 
       player.erase();
       player.set_x((matrix.width() * potentiometer_value) / 1024 );
@@ -505,8 +879,30 @@ class Game {
         ball.fire(player.get_x(), 14);
       }
       ball.move();
-
-
+      
+      if (level == 6)  {
+        bone.move();
+        if (ball.has_been_fired()) {
+          if (bone.has_been_hit(ball.get_x(), ball.get_y())) {
+            
+            ball.hit();
+            bone.hit();
+          }
+        }
+      
+      if (bone.has_hit_bottom() || bone.boss1_hit_player(player.get_x(),  player.get_y())) {
+        player.die();
+        matrix.fillScreen(BLACK.to_333());
+        matrix.setCursor(1,0);
+        matrix.println("Life");
+        matrix.print("Lost");
+        delay(2000);
+         
+        setupGame();
+        }
+      }
+      
+      else {
       for (int i = 0; i < NUM_ENEMIES; i++) {
         
         if (enemies[i].get_strength() > 0) {
@@ -526,6 +922,7 @@ class Game {
             enemies[i].hit();
           }
         }
+
         if (enemies[i].has_hit_bottom() || enemies[i].invader_hit_cannon(player.get_x(),  player.get_y())) {
         player.die();
         matrix.fillScreen(BLACK.to_333());
@@ -533,23 +930,11 @@ class Game {
         matrix.println("Life");
         matrix.print("Lost");
         delay(2000);
-
-      //   if (player.get_lives() <= 0) {
-      //   break;
-      // }
+         
         setupGame();
         }
       }
-
-      // if (player.get_lives() <= 0)
-      // {
-      //   game_over();
-      //   delay(1000);
-      //   level = 1;
-      //   //time = 0;
-      //   player.restart_player();
-      //   setupGame();
-      // }
+      }
 
       if (level_cleared()) {
         reset_level();
@@ -561,8 +946,12 @@ class Game {
     unsigned long time;
     Player player;
     Cannonball ball;
+    Boss1 bone;
+    Boss2 btwo;
     Invader enemies[NUM_ENEMIES];
 
+    // checks if the bottom row of Invaders, closest to the invader,
+    // is fully elimintaed. If so, function returns true, else it returns false.
     bool bottom_row_cleared() {
       for (int i = 8; i < NUM_ENEMIES; i++) {
         if (enemies[i].get_strength() > 0) {
@@ -574,9 +963,18 @@ class Game {
 
     // check if Player defeated all Invaders in current level
     bool level_cleared() {
-      for (int i = 0; i < NUM_ENEMIES; i++) {
-        if (enemies[i].get_strength() > 0) {
+      if (level == 6)
+      {
+        if (bone.get_strength() > 0)
+        {
           return false;
+        }
+      }
+      else {
+        for (int i = 0; i < NUM_ENEMIES; i++) {
+          if (enemies[i].get_strength() > 0) {
+            return false;
+          }
         }
       }
       return true;
@@ -597,15 +995,21 @@ void setup() {
   Serial.begin(9600);
   pinMode(BUTTON_PIN_NUMBER, INPUT);
   matrix.begin();
-  title();
+  // Title is printed
+  title(); 
+  // setupGame function is called to set up the levels so player can play game
   game.setupGame();
 }
 
 // see https://www.arduino.cc/reference/en/language/structure/sketch/loop/
 void loop() {
+  // For the loop, potentiometer value and button pressed value is recorded and 
+  // sent as arguments to the update function.
   int potentiometer_value = analogRead(POTENTIOMETER_PIN_NUMBER);
   bool button_pressed = (digitalRead(BUTTON_PIN_NUMBER) == HIGH);
   game.update(potentiometer_value, button_pressed);
+
+
 }
 
 // displays Level
@@ -632,10 +1036,18 @@ void game_over() {
 }
 
 void title() {
+  // Makes sure the screen starts off black so letters can be printed
   matrix.fillScreen(BLACK.to_333());
   matrix.setTextSize(1);
-  int textWidth = 4 * strlen("SPACE INVADERS"); // Approximate width of the text
-  int x = matrix.width(); // Start the text off the screen to the right
+
+  // Approximates the width of the title
+  int textWidth = 4 * strlen("SPACE INVADERS"); 
+
+  // The starting point of where the text starts off on the screen
+  int x = matrix.width(); 
+
+  // While condition is true, each letter is printed with a different color 
+  // and after every letter is printed, x is decremented to move text left
   while (x > -textWidth) {
     matrix.fillScreen(BLACK.to_333());
     matrix.setCursor(x - 28, 0);
@@ -667,7 +1079,10 @@ void title() {
     matrix.setTextColor(GREEN.to_333());
     matrix.print("S");
     matrix.setTextColor(WHITE.to_333());
-    delay(150); // Adjust for scrolling speed
-    x--; // Move text left by one pixel each loop
+
+    // Delay so the title appears to roll off the screen
+    delay(150); 
+    // x is decremented to move the text one pixel left for each loop
+    x--; 
   }
 }
